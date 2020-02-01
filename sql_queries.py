@@ -132,7 +132,6 @@ staging_songs_copy = ("""
 """).format(SONG_DATA, IAM_ROLE_ARN)
 
 # FINAL TABLES
-
 songplay_table_insert = ("""
     INSERT INTO songplays(
         start_time, 
@@ -143,7 +142,7 @@ songplay_table_insert = ("""
         session_id, 
         location, 
         user_agent) 
-    SELECT 
+    SELECT DISTINCT
         se.ts AS start_time, 
         se.userId AS user_id, 
         se.level, 
@@ -174,6 +173,8 @@ user_table_insert = ("""
         se.level
     FROM staging_events se
     WHERE se.page = 'NextSong'
+    GROUP BY se.userId, se.firstName, se.lastName, se.gender, se.level
+    ORDER BY se.userId ASC
 """)
 
 song_table_insert = ("""
@@ -183,7 +184,7 @@ song_table_insert = ("""
         artist_id, 
         year, 
         duration) 
-    SELECT
+    SELECT DISTINCT
         ss.song_id,
         ss.title,
         ss.artist_id,
@@ -200,7 +201,7 @@ artist_table_insert = ("""
         location, 
         latitude, 
         longitude) 
-    SELECT
+    SELECT DISTINCT
         ss.artist_id,
         ss.artist_name AS name,
         ss.artist_location AS location,
@@ -227,7 +228,12 @@ time_table_insert = ("""
         EXTRACT(month FROM start_time) AS month,
         EXTRACT(year FROM start_time) AS year,
         EXTRACT(dayofweek FROM start_time) AS weekday
-    FROM staging_events se
+    FROM (
+        SELECT ts 
+        FROM staging_events
+        GROUP BY ts
+        ) AS se
+    ORDER BY se.ts ASC
 """)
 
 # QUERY LISTS

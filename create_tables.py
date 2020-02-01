@@ -2,20 +2,22 @@ import configparser
 import psycopg2
 from sql_queries import create_table_queries, drop_table_queries
 
-print("Run 'drop_table_queries'")
 def drop_tables(cur, conn):
+    """Drop Tables If Exists in Redshift Cluster"""
     for query in drop_table_queries:
         cur.execute(query)
         conn.commit()
 
-print("Run 'create_table_queries'")
 def create_tables(cur, conn):
+    """Create Tables in Redshift Cluster"""
     for query in create_table_queries:
         cur.execute(query)
         conn.commit()
 
-
 def main():
+    print("Executing create_tables.py")
+    
+    """Set configurations"""
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
     
@@ -32,11 +34,13 @@ def main():
                         .format(HOST, NAME, USER, PASSWORD, PORT))
     cur = conn.cursor()
 
+    print("Drop Tables If Exists in Redshift Cluster")
     drop_tables(cur, conn)
+    
+    print("Create Tables in Redshift Cluster")
     create_tables(cur, conn)
 
     conn.close()
-
 
 if __name__ == "__main__":
     main()
