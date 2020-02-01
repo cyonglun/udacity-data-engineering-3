@@ -74,7 +74,23 @@ And below is an example of what a single line of data in a log file, 2018-11-22-
 }
 ```
 
-## Results
+## How to run
+
+1. Open dwh.cfg
+2. Under [AWS] section, enter the KEY and SECRET 
+3. Open notebook.ipynb
+4. Execute through the steps until "Setup Redshift Cluster"
+5. Execute "Describe Redshift cluster for AVAILABLE status" until the ClusterStatus is 'available'
+6. Execute "Update Endpoint and role ARN to Config" to set ARN and HOST to thw dwh.cfg file
+7. Execute "Run create_tables.py", and then execute "Verify tables are created" to ensure that tables have been created successfully
+8. Execute "Run etl.py", and then execute "Count Records in each table" to ensure the records have been inserted successfully
+9. Execute the following SQL queries and note the results
+10. Execute "Clean up and delete cluster"
+11. Execute "Describe Redshift cluster for DELETE status" and wait for the cluster to be successfully deleted
+12. Execute "Detach IAM role"
+
+
+## Query Results
 1. Give me the artist, song title and song's length in the music app history that was heard during sessionId = 139
 
 | Artist | Song | Length |
